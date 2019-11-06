@@ -1,0 +1,11 @@
+This is a test file.
+
+It has newlines
+(There should be three lines of whitespace between here...)
+
+
+
+(...and here!)
+Special characters: !@#$%^&*()_\\[]:"<>/
+
+And numbers: 1234567890
