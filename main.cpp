@@ -48,7 +48,7 @@ int main(int, char **argv) {
 	char buffer[MAX_DATA_CHUNK_SZ];
 	int buffer_size = sizeof(buffer) / sizeof(buffer[0]);
 
-	ifstream in_file("test.txt", ios::in | ios::binary);
+	ifstream in_file(argv[1], ios::in | ios::binary);
 
 	file_size = get_file_size(in_file);
 	chunk_size = get_next_chunk_size(0, file_size);
