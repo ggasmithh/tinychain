@@ -2,7 +2,7 @@
 a tiny blockchain for file storage and retrieval
 
 # what?
-tinychain is a dead-simple blockchain that stores text files (other file formats coming soonish)
+tinychain is a dead-simple blockchain that stores files
 
 # why?
 it seemed like fun
