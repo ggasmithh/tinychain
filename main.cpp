@@ -3,24 +3,15 @@
 #include <cmath>
 #include <fstream>
 #include <algorithm>
-#include <vector>
 
 using namespace std;
 
 const int MAX_DATA_CHUNK_SZ = 2;
 
-Block next_block(Block *previous_block, char* data, int data_size) {
+Block next_block(Block *previous_block, vector<char> data, int data_size) {
 	int new_index = previous_block->index + 1;
-	char* sized_data;
-	sized_data = new char[data_size];
 
-	memset(sized_data, 0, sizeof(sized_data));
-
-	for (int i = 0; i < data_size; i++) {
-		sized_data[i] = data[i];
-	}
-
-	return Block(new_index, sized_data, previous_block->block_hash);
+	return Block(new_index, data, previous_block->block_hash);
 }
 
 int get_file_size(ifstream &in_file) {
@@ -45,31 +36,33 @@ int get_next_chunk_size(int current_file_position, int file_size) {
 int main(int, char **argv) {
 	int file_size;
 	int chunk_size;
-	char buffer[MAX_DATA_CHUNK_SZ];
-	int buffer_size = sizeof(buffer) / sizeof(buffer[0]);
+	vector<char> buffer;
 
-	//ifstream in_file(argv[1], ios::in | ios::binary);
-	ifstream in_file("test.txt", ios::in | ios::binary);
+	ifstream in_file(argv[1], ios::in | ios::binary);
 
 	file_size = get_file_size(in_file);
 	chunk_size = get_next_chunk_size(0, file_size);
 
-	Block genesis(-1, buffer, "");
+	Block genesis(-1, buffer , "");
 	vector<Block> blockchain = { genesis };
 
 	int next_chunk_size = MAX_DATA_CHUNK_SZ;
 	// Putting data into the blockchain
 	for (int i = 0; i < file_size; i += next_chunk_size) {
 		next_chunk_size = get_next_chunk_size(i, file_size);
-		in_file.read(buffer, next_chunk_size);
+		buffer.resize(next_chunk_size);
+		in_file.read(&buffer[0], next_chunk_size);
 		Block new_block = next_block(&blockchain.back(), buffer, next_chunk_size);
 		blockchain.push_back(new_block);
 	}
 
 	// Getting data out of the blockchain
-	ofstream output("output.txt", ios_base::trunc | ios::binary | ios::out);
+	ofstream output("output", ios_base::trunc | ios::binary | ios::out);
 	for (int i = 1; i < blockchain.size(); i++) {
-		output << blockchain[i].data;
+		// this is super gross fix it later
+		for (int j = 0; j < blockchain[i].data.size(); j++) {
+			output << blockchain[i].data[j];
+		}
 	}
 
 	output.close();
