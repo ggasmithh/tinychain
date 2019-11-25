@@ -15,7 +15,6 @@ Block next_block(Block *previous_block, vector<char> data, int data_size) {
 }
 
 int get_file_size(ifstream &in_file) {
-	
 	int size;
 
 	if (!in_file.is_open()) {
@@ -35,30 +34,38 @@ int get_next_chunk_size(int current_file_position, int file_size) {
 
 int main(int, char **argv) {
 	int file_size;
-	int chunk_size;
+
 	vector<char> buffer;
+
+	int next_chunk_size;
+	int last_chunk_size;
 
 	ifstream in_file(argv[1], ios::in | ios::binary);
 	//ifstream in_file("test.jpg", ios::in | ios::binary);
 
 	file_size = get_file_size(in_file);
-	chunk_size = get_next_chunk_size(0, file_size);
+	next_chunk_size = get_next_chunk_size(0, file_size);
+	last_chunk_size = next_chunk_size;
+	buffer.resize(next_chunk_size);
 
 	Block genesis(-1, buffer , "");
 	vector<Block> blockchain = { genesis };
 
-	int next_chunk_size = MAX_DATA_CHUNK_SZ;
 	// Putting data into the blockchain
 	for (int i = 0; i < file_size; i += next_chunk_size) {
+		last_chunk_size = next_chunk_size;
 		next_chunk_size = get_next_chunk_size(i, file_size);
-		buffer.resize(next_chunk_size);
+		// skip redundant resize actions
+		if (next_chunk_size != last_chunk_size) {
+			buffer.resize(next_chunk_size);
+		}
 		in_file.read(&buffer[0], next_chunk_size);
 		Block new_block = next_block(&blockchain.back(), buffer, next_chunk_size);
 		blockchain.push_back(new_block);
 	}
 
 	// Getting data out of the blockchain
-	ofstream output("output.jpg", ios_base::trunc | ios::binary | ios::out);
+	ofstream output("output", ios_base::trunc | ios::binary | ios::out);
 	for (int i = 1; i < blockchain.size(); i++) {
 		output << string(blockchain[i].data.begin(), blockchain[i].data.end());
 	}
