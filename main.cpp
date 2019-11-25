@@ -39,6 +39,7 @@ int main(int, char **argv) {
 	vector<char> buffer;
 
 	ifstream in_file(argv[1], ios::in | ios::binary);
+	//ifstream in_file("test.jpg", ios::in | ios::binary);
 
 	file_size = get_file_size(in_file);
 	chunk_size = get_next_chunk_size(0, file_size);
@@ -57,12 +58,9 @@ int main(int, char **argv) {
 	}
 
 	// Getting data out of the blockchain
-	ofstream output("output", ios_base::trunc | ios::binary | ios::out);
+	ofstream output("output.jpg", ios_base::trunc | ios::binary | ios::out);
 	for (int i = 1; i < blockchain.size(); i++) {
-		// this is super gross fix it later
-		for (int j = 0; j < blockchain[i].data.size(); j++) {
-			output << blockchain[i].data[j];
-		}
+		output << string(blockchain[i].data.begin(), blockchain[i].data.end());
 	}
 
 	output.close();
