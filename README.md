@@ -8,8 +8,9 @@ tinychain is a dead-simple blockchain that stores text files (other file formats
 it seemed like fun
 
 # plans
-* Serialization of Blocks to JSON
-* Support for arbitrary file formats
+* Serialization of Blocks to file
+* ~~Support for arbitrary file formats~~
+* add --add/-a, --remove/-r, and --update/-u flags to program
 * Support for multiple files on one blockchain
     * This could probably be done by splitting blocks into two types:
         * Data Blocks
